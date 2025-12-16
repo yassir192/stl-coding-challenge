@@ -1,0 +1,22 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title "Legacy Payout Architecture"
+
+System_Boundary(payout_system, "Payout System (GKE)") {
+
+    Container(cron_job, "CronJob Trigger", "K8s Pod", "Triggers at 02:00 AM. Scaled to 3 Replicas for HA.")
+
+    Container(payout_service, "Payout Service", "Spring Boot", "Reads Pending Tx, calls Bank, updates Status.")
+
+    ContainerDb(database, "Transaction DB", "MySQL", "Stores transaction ledgers and status.")
+}
+
+System_Ext(bank_api, "Bank API", "External System")
+
+Rel(cron_job, payout_service, "1. Trigger Process", "HTTP POST /start")
+Rel(payout_service, database, "2. Read ALL Pending Transactions", "JDBC")
+Rel(payout_service, bank_api, "3. Transfer Money", "HTTPS (Sync)")
+Rel(payout_service, database, "4. Update Status", "JDBC")
+
+@enduml
