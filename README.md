@@ -4,6 +4,9 @@
 We aggregate **5 million daily transactions** and settle funds to **100,000 merchants**.
 This service runs on Kubernetes (GCP).
 
+## Architecture
+![architecture diagram](./docs/architecture.png)
+
 ## Key Requirements
 1. **Schedule:** Runs daily at 02:00 AM UTC.
 2. **Safety:** **EXACTLY-ONCE** payout. Double payments are a disaster.
